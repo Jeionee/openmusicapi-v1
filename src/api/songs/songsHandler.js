@@ -1,0 +1,79 @@
+class SongsHandler {
+	constructor(service, validator) {
+		this._service = service;
+		this._validator = validator;
+
+		this.addSongsHandler = this.addSongsHandler.bind(this);
+        this.getSongsHandler = this.getSongsHandler.bind(this);
+        this.getSongsByIdHandler = this.getSongsByIdHandler.bind(this);
+        this.editSongsByIdHandler = this.editSongsByIdHandler.bind(this);
+        this.deleteSongsByIdHandler = this.deleteSongsByIdHandler.bind(this);
+	}
+
+	async addSongsHandler(request, h) {
+		await this._validator.validateSongPayload(request.payload);
+		const { title, year, genre, performer, duration, albumId } = request.payload;
+
+		const songsId = await this._service.addSong({
+            title, year, genre, performer, duration, albumId,
+        });
+
+		const response = h.response({
+			status: "success",
+			message: "Lagu berhasil ditambahkan",
+			data: {
+				songsId,
+			},
+		});
+		response.code(201);
+		return response;
+	}
+
+	async getSongsHandler(request, h) {
+		const { title, performer } = request.query;
+		const songs = await this._service.getSongs({ title, performer });
+
+		return {
+			status: "success",
+			data: {
+				songs,
+			},
+		};
+	}
+
+	async getSongsByIdHandler(request, h) {
+		const { id } = request.params;
+        const songs = await this._service.getSongById(id);
+
+		return {
+			status: "success",
+			data: {
+				songs,
+			},
+		};
+	}
+
+    async editSongsByIdHandler(request, h) {
+        this._validator.validateSongPayload(request.payload);
+        const { id } = request.params;
+
+        await this._service.editSongById(id, request.payload);
+
+		return {
+			status: "success",
+			message: "Lagu berhasil diperbarui",
+		};
+    }
+
+	async deleteSongsByIdHandler(request, h) {
+		const { id } = request.params;
+		await this._service.deleteSongById(id);
+
+		return { 
+			status: "success",
+			message: "Lagu berhasil dihapus",
+		};
+	}
+}
+
+module.exports = SongsHandler;
