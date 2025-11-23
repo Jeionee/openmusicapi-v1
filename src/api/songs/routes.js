@@ -1,9 +1,8 @@
-const handler = require("./songsHandler");
 const routes = (handler) => [
     {
         method: "POST",
         path: "/songs",
-        handler: handler.addSongsHandler,
+        handler: handler.postSongHandler,
     },
     {
         method: "GET",
@@ -13,17 +12,17 @@ const routes = (handler) => [
     {
         method: "GET",
         path: "/songs/{id}",
-        handler: handler.getSongsByIdHandler,
+        handler: handler.getSongByIdHandler,
     },
     {
         method: "PUT",
         path: "/songs/{id}",
-        handler: handler.editSongsByIdHandler,
+        handler: handler.putSongByIdHandler,
     },
     {
         method: "DELETE",
         path: "/songs/{id}",
-        handler: handler.deleteSongsByIdHandler,
+        handler: handler.deleteSongByIdHandler,
     },
 ];
 
