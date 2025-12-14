@@ -9,21 +9,31 @@ class AlbumsHandler {
 		this.deleteAlbumByIdHandler = this.deleteAlbumByIdHandler.bind(this);
 	}
 
-	async postAlbumHandler(request, h) {
-		this._validator.validateAlbumPayload(request.payload);
-		const { name, year } = request.payload;
-		const albumId = await this._service.addAlbum({ name, year });
+	postAlbumHandler = async (request, h) => {
+		try {
+			const { name, year } = request.payload;
+			this._validator.validateAlbumPayload(request.payload);
+			const albumId = await this._service.addAlbum({ name, year });
 
-		const response = h.response({
-			status: "success",
-			message: "Album berhasil ditambahkan",
-			data: {
-				albumId,
-			},
-		});
-		response.code(201);
-		return response;
-	}
+			return h.response({
+				status: 'success',
+				message: 'Album berhasil ditambahkan',
+				data: { albumId },
+			}).code(201);
+		} catch (error) {
+			if (error instanceof InvariantError) {
+				return h.response({
+					status: 'fail',
+					message: error.message,
+				}).code(400);
+			}
+			return h.response({
+				status: 'error',
+				message: 'Internal Server Error',
+			}).code(500);
+		}
+	};
+
 
 	async getAlbumByIdHandler(request) {
 		const { id } = request.params;

@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const InvariantError = require('../exceptions/InvariantError');
 
 const AlbumSchema = Joi.object({
     name: Joi.string().required(),
@@ -14,4 +15,27 @@ const SongSchema = Joi.object({
     albumId: Joi.string(),
 });
 
-module.exports = { AlbumSchema, SongSchema };
+const UserPayloadSchema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+    fullname: Joi.string().required(),
+});
+
+const AuthenticationPayloadSchema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+});
+
+const TokenPayloadSchema = Joi.object({
+    refreshToken: Joi.string().required(),
+});
+
+const PlaylistPayloadSchema = Joi.object({
+    name: Joi.string().required(),
+});
+
+const PlaylistSongPayloadSchema = Joi.object({
+    songId: Joi.string().required(),
+});
+
+module.exports = { AlbumSchema, SongSchema, UserPayloadSchema, AuthenticationPayloadSchema, TokenPayloadSchema, PlaylistPayloadSchema, PlaylistSongPayloadSchema };

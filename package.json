@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node ./src/server.js",
     "start:dev": "nodemon ./src/server.js",
-    "migrate": "npx node-pg-migrate"
+    "migrate": "npx node-pg-migrate",
+    "migrate:up": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down"
   },
   "repository": {
     "type": "git",
@@ -21,7 +23,9 @@
   "homepage": "https://github.com/Jeionee/openmusicapi-v1#readme",
   "dependencies": {
     "@hapi/hapi": "^21.4.4",
+    "@hapi/jwt": "^3.2.1",
     "auto-bind": "^5.0.1",
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
     "joi": "^18.0.1",
     "migrate": "^2.1.0",
