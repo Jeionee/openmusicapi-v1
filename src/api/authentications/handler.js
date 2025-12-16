@@ -38,6 +38,7 @@ class AuthenticationsHandler {
 
     const response = h.response({
       status: 'success',
+      message: 'Authentication berhasil ditambahkan',
       data: {
         accessToken,
         refreshToken,
@@ -66,6 +67,7 @@ class AuthenticationsHandler {
 
     const response = h.response({
       status: 'success',
+      message: 'Access Token berhasil diperbarui',
       data: {
         accessToken,
       },
@@ -82,11 +84,12 @@ class AuthenticationsHandler {
     await this._authenticationsService.deleteRefreshToken(refreshToken);
 
     const response = h.response({
-        status: 'success',
+      status: 'success',
+      message: 'Refresh token berhasil dihapus', 
     });
     response.code(200);
     return response;
-    }
+  }
 }
 
 module.exports = AuthenticationsHandler;

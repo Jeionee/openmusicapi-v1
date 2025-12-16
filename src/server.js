@@ -53,72 +53,75 @@ const init = async () => {
     }),
   });
 
-  await server.register({
-    plugin: albums,
-    options: {
-      service: albumsService,
-      validator: AlbumValidator,
+  await server.register([
+    {
+      plugin: albums,
+      options: {
+        service: albumsService,
+        validator: AlbumValidator,
+      },
     },
-  }),
-    
-  await server.register({
-    plugin: songs,
-    options: {
-      service: songsService,
-      validator: SongValidator,
+    {
+      plugin: songs,
+      options: {
+        service: songsService,
+        validator: SongValidator,
+      },
     },
-  }),
-
-  await server.register({
-    plugin: users,
-    options: {
-      service: usersService,
-      validator: UserValidator,
+    {
+      plugin: users,
+      options: {
+        service: usersService,
+        validator: UserValidator,
+      },
     },
-  }),
-
-  await server.register({
-    plugin: authentications,
-    options: {
-      authenticationsService,
-      usersService,
-      validator: { AuthenticationValidator, TokenValidator },
+    {
+      plugin: authentications,
+      options: {
+        authenticationsService,
+        usersService,
+        validator: { AuthenticationValidator, TokenValidator },
+      },
     },
-  }),
-    
-  await server.register({
-    plugin: playlists,
-    options: {
-      service: playlistsService,
-      validator: PlaylistValidator,
-      playlistSongValidator: PlaylistSongValidator,
+    {
+      plugin: playlists,
+      options: {
+        service: playlistsService,
+        validator: PlaylistValidator,
+        playlistSongValidator: PlaylistSongValidator,
+      },
     },
-  });
-
+  ]);
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
 
-    if (response instanceof ClientError) {
-      const newResponse = h.response({
-        status: 'fail',
-        message: response.message,
-      });
-      newResponse.code(response.statusCode);
-      return newResponse;
+    if (response instanceof Error) {
+        if (response instanceof ClientError) {
+            const newResponse = h.response({
+                status: 'fail',
+                message: response.message,
+            });
+            newResponse.code(response.statusCode);
+            return newResponse;
+        }
+
+        if (!response.isServer) {
+            return h.continue;
+        }
+
+        console.error('SERVER ERROR:', response.message); 
+        console.error(response.stack); 
+
+        const newResponse = h.response({
+            status: 'error',
+            message: 'Maaf, terjadi kegagalan pada server kami.',
+        });
+        newResponse.code(500);
+        return newResponse;
     }
 
-    if (!response.isServer) {
-      return h.continue;
-    }
-
-    const newResponse = h.response({
-      status: 'error',
-      message: 'Maaf, terjadi kegagalan pada server kami.',
-    });
-    newResponse.code(500);
-    console.error(response); // logging biar tahu error apa
-    return newResponse;
+    return h.continue;
   });
 
   await server.start();

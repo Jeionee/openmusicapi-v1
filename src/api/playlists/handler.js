@@ -21,9 +21,8 @@ class PlaylistsHandler {
 
     const response = h.response({
       status: 'success',
-      data: {
-        playlistId,
-      },
+      message: 'Playlist berhasil ditambahkan',
+      data: { playlistId },
     });
     response.code(201);
     return response;
@@ -32,24 +31,21 @@ class PlaylistsHandler {
   async getPlaylistsHandler(request) {
     const { id: credentialId } = request.auth.credentials;
     const playlists = await this._service.getPlaylists(credentialId);
-
     return {
       status: 'success',
-      data: {
-        playlists,
-      },
+      data: { playlists },
     };
   }
 
   async deletePlaylistByIdHandler(request) {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
-
     await this._service.verifyPlaylistOwner(id, credentialId);
     await this._service.deletePlaylistById(id);
 
     return {
       status: 'success',
+      message: 'Playlist berhasil dihapus', 
     };
   }
 
@@ -64,6 +60,7 @@ class PlaylistsHandler {
 
     const response = h.response({
       status: 'success',
+      message: 'Lagu berhasil ditambahkan ke playlist', 
     });
     response.code(201);
     return response;
@@ -72,15 +69,12 @@ class PlaylistsHandler {
   async getSongsFromPlaylistHandler(request) {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
-
     await this._service.verifyPlaylistOwner(id, credentialId);
     const playlist = await this._service.getSongsFromPlaylist(id);
 
     return {
       status: 'success',
-      data: {
-        playlist,
-      },
+      data: { playlist },
     };
   }
 
@@ -95,6 +89,7 @@ class PlaylistsHandler {
 
     return {
       status: 'success',
+      message: 'Lagu berhasil dihapus dari playlist',
     };
   }
 }
