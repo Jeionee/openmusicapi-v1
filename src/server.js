@@ -2,26 +2,32 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 
+// Import Plugins
 const albums = require('./api/albums');
 const songs = require('./api/songs');
 const users = require('./api/users');
 const authentications = require('./api/authentications');
 const playlists = require('./api/playlists');
+const collaborations = require('./api/collaborations'); 
 
+// Import Services
 const AlbumsService = require('./services/AlbumsService');
 const SongsService = require('./services/SongsService');
 const UsersService = require('./services/UsersService');
 const AuthenticationsService = require('./services/AuthenticationsService');
 const PlaylistsService = require('./services/PlaylistsService');
+const CollaborationsService = require('./services/CollaborationsService');
 
-const { 
-  AlbumValidator, 
-  SongValidator, 
-  UserValidator, 
-  AuthenticationValidator, 
-  TokenValidator, 
-  PlaylistValidator, 
+// Import Validators
+const {
+  AlbumValidator,
+  SongValidator,
+  UserValidator,
+  AuthenticationValidator,
+  TokenValidator,
+  PlaylistValidator,
   PlaylistSongValidator,
+  CollaborationsValidator,
 } = require('./validator');
 
 const ClientError = require('./exceptions/ClientError');
@@ -31,7 +37,8 @@ const init = async () => {
   const songsService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
-  const playlistsService = new PlaylistsService();
+  const collaborationsService = new CollaborationsService();
+  const playlistsService = new PlaylistsService(collaborationsService); // Inject Collab Service
 
   const server = Hapi.server({
     port: process.env.PORT || 5000,
@@ -95,9 +102,18 @@ const init = async () => {
       plugin: playlists,
       options: {
         service: playlistsService,
-        songsService,
+        songsService, // <--- Ini harus bernama songsService
         validator: PlaylistValidator,
         playlistSongValidator: PlaylistSongValidator,
+      },
+    },
+    {
+      plugin: collaborations,
+      options: {
+        collaborationsService,
+        playlistsService,
+        usersService,
+        validator: CollaborationsValidator,
       },
     },
   ]);
@@ -106,28 +122,28 @@ const init = async () => {
     const { response } = request;
 
     if (response instanceof Error) {
-        if (response instanceof ClientError) {
-            const newResponse = h.response({
-                status: 'fail',
-                message: response.message,
-            });
-            newResponse.code(response.statusCode);
-            return newResponse;
-        }
-
-        if (!response.isServer) {
-            return h.continue;
-        }
-
-        console.error('SERVER ERROR:', response.message); 
-        console.error(response.stack);
-
+      if (response instanceof ClientError) {
         const newResponse = h.response({
-            status: 'error',
-            message: 'Maaf, terjadi kegagalan pada server kami.',
+          status: 'fail',
+          message: response.message,
         });
-        newResponse.code(500);
+        newResponse.code(response.statusCode);
         return newResponse;
+      }
+
+      if (!response.isServer) {
+        return h.continue;
+      }
+
+      console.error('SERVER ERROR:', response.message);
+      console.error(response.stack);
+
+      const newResponse = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      newResponse.code(500);
+      return newResponse;
     }
 
     return h.continue;

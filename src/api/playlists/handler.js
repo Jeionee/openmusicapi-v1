@@ -1,7 +1,7 @@
 class PlaylistsHandler {
   constructor(service, songsService, validator, playlistSongValidator) {
     this._service = service;
-    this._songsService = songsService; // Service lagu untuk verifikasi
+    this._songsService = songsService;
     this._validator = validator;
     this._playlistSongValidator = playlistSongValidator;
 
@@ -12,7 +12,7 @@ class PlaylistsHandler {
     this.getSongsFromPlaylistHandler = this.getSongsFromPlaylistHandler.bind(this);
     this.deleteSongFromPlaylistHandler = this.deleteSongFromPlaylistHandler.bind(this);
     
-    // INI YANG HILANG SEBELUMNYA:
+    // WAJIB ADA: Binding untuk activities
     this.getPlaylistActivitiesHandler = this.getPlaylistActivitiesHandler.bind(this);
   }
 
@@ -61,11 +61,12 @@ class PlaylistsHandler {
 
     await this._service.verifyPlaylistAccess(id, credentialId);
     
-    await this._songsService.getSongById(songId); 
+    // Verifikasi lagu ada di database
+    await this._songsService.getSongById(songId);
 
     await this._service.addSongToPlaylist(id, songId);
 
-    // Catat activity: add
+    // Catat activity
     const action = 'add';
     await this._service.addPlaylistActivity(id, { songId, userId: credentialId, action });
 
@@ -98,7 +99,7 @@ class PlaylistsHandler {
     await this._service.verifyPlaylistAccess(id, credentialId);
     await this._service.deleteSongFromPlaylist(id, songId);
 
-    // Catat activity: delete
+    // Catat activity
     const action = 'delete';
     await this._service.addPlaylistActivity(id, { songId, userId: credentialId, action });
 
@@ -108,6 +109,7 @@ class PlaylistsHandler {
     };
   }
 
+  // WAJIB ADA: Method handler untuk activities
   async getPlaylistActivitiesHandler(request) {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
