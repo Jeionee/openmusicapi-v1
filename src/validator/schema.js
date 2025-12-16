@@ -1,41 +1,56 @@
 const Joi = require('joi');
-const InvariantError = require('../exceptions/InvariantError');
 
 const AlbumSchema = Joi.object({
-    name: Joi.string().required(),
-    year: Joi.number().required(),
+  name: Joi.string().required(),
+  year: Joi.number().integer().min(1900).max(new Date().getFullYear())
+    .required(),
 });
 
 const SongSchema = Joi.object({
-    title: Joi.string().required(),
-    year: Joi.number().required(),
-    genre: Joi.string().required(),
-    performer: Joi.string().required(),
-    duration: Joi.number(),
-    albumId: Joi.string(),
+  title: Joi.string().required(),
+  year: Joi.number().integer().min(1900).max(new Date().getFullYear())
+    .required(),
+  genre: Joi.string().required(),
+  performer: Joi.string().required(),
+  duration: Joi.number(),
+  albumId: Joi.string(),
 });
 
 const UserPayloadSchema = Joi.object({
-    username: Joi.string().required(),
-    password: Joi.string().required(),
-    fullname: Joi.string().required(),
+  username: Joi.string().required(),
+  password: Joi.string().required(),
+  fullname: Joi.string().required(),
 });
 
 const AuthenticationPayloadSchema = Joi.object({
-    username: Joi.string().required(),
-    password: Joi.string().required(),
+  username: Joi.string().required(),
+  password: Joi.string().required(),
 });
 
 const TokenPayloadSchema = Joi.object({
-    refreshToken: Joi.string().required(),
+  refreshToken: Joi.string().required(),
 });
 
 const PlaylistPayloadSchema = Joi.object({
-    name: Joi.string().required(),
+  name: Joi.string().required(),
 });
 
 const PlaylistSongPayloadSchema = Joi.object({
-    songId: Joi.string().required(),
+  songId: Joi.string().required(),
 });
 
-module.exports = { AlbumSchema, SongSchema, UserPayloadSchema, AuthenticationPayloadSchema, TokenPayloadSchema, PlaylistPayloadSchema, PlaylistSongPayloadSchema };
+const CollaborationPayloadSchema = Joi.object({
+  playlistId: Joi.string().required(),
+  userId: Joi.string().required(),
+});
+
+module.exports = {
+  AlbumSchema,
+  SongSchema,
+  UserPayloadSchema,
+  AuthenticationPayloadSchema,
+  TokenPayloadSchema,
+  PlaylistPayloadSchema,
+  PlaylistSongPayloadSchema,
+  CollaborationPayloadSchema,
+};

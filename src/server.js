@@ -14,7 +14,15 @@ const UsersService = require('./services/UsersService');
 const AuthenticationsService = require('./services/AuthenticationsService');
 const PlaylistsService = require('./services/PlaylistsService');
 
-const { AlbumValidator, SongValidator, UserValidator, AuthenticationValidator, TokenValidator, PlaylistValidator, PlaylistSongValidator } = require('./validator');
+const { 
+  AlbumValidator, 
+  SongValidator, 
+  UserValidator, 
+  AuthenticationValidator, 
+  TokenValidator, 
+  PlaylistValidator, 
+  PlaylistSongValidator,
+} = require('./validator');
 
 const ClientError = require('./exceptions/ClientError');
 
@@ -87,6 +95,7 @@ const init = async () => {
       plugin: playlists,
       options: {
         service: playlistsService,
+        songsService,
         validator: PlaylistValidator,
         playlistSongValidator: PlaylistSongValidator,
       },
@@ -111,7 +120,7 @@ const init = async () => {
         }
 
         console.error('SERVER ERROR:', response.message); 
-        console.error(response.stack); 
+        console.error(response.stack);
 
         const newResponse = h.response({
             status: 'error',
