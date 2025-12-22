@@ -8,8 +8,7 @@ class AlbumsHandler {
     this.getAlbumByIdHandler = this.getAlbumByIdHandler.bind(this);
     this.putAlbumByIdHandler = this.putAlbumByIdHandler.bind(this);
     this.deleteAlbumByIdHandler = this.deleteAlbumByIdHandler.bind(this);
-
-    this.postAlbumImageHandler = this.postAlbumImageHandler.bind(this);
+    this.postUploadImageHandler = this.postUploadImageHandler.bind(this);
   }
 
   postAlbumHandler = async (request, h) => {
@@ -68,6 +67,7 @@ class AlbumsHandler {
   async postUploadImageHandler(request, h) {
     const { cover } = request.payload;
     const { id } = request.params;
+    
     this._validator.validateImageHeaders(cover.hapi.headers);
 
     const filename = await this._storageService.writeFile(cover, cover.hapi);
