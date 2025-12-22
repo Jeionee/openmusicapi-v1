@@ -30,11 +30,39 @@ class AlbumsService {
             values: [id],
         };
         const result = await this._pool.query(query);
+
         if (!result.rows.length) {
             throw new NotFoundError('Album tidak ditemukan');
         }
 
-        return result.rows[0];
+        const album = result.rows[0];
+
+        const songsQuery = {
+            text: 'SELECT id, title, performer FROM songs WHERE album_id = $1',
+            values: [id],
+        };
+        const songsResult = await this._pool.query(songsQuery);
+
+        return {
+            id: album.id,
+            name: album.name,
+            year: album.year,
+            coverUrl: album.cover ? `http://${process.env.HOST}:${process.env.PORT}/albums/covers/${album.cover}` : null,
+            songs: songsResult.rows,
+        };
+    }
+
+    async updateAlbumCover(id, cover) {
+        const query = {
+            text: 'UPDATE albums SET cover = $1 WHERE id = $2 RETURNING id',
+            values: [cover, id],
+        };
+
+        const result = await this._pool.query(query);
+
+        if (!result.rows.length) {
+            throw new NotFoundError('Gagal memperbarui sampul. Id tidak ditemukan');
+        }
     }
 
     async getSongByAlbumId(albumId) {

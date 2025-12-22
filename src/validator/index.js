@@ -1,5 +1,5 @@
 const InvariantError = require('../exceptions/InvariantError');
-const { AlbumSchema, SongSchema, UserPayloadSchema, AuthenticationPayloadSchema, TokenPayloadSchema, PlaylistPayloadSchema, PlaylistSongPayloadSchema, CollaborationPayloadSchema } = require('./schema');
+const { AlbumSchema, SongSchema, UserPayloadSchema, AuthenticationPayloadSchema, TokenPayloadSchema, PlaylistPayloadSchema, PlaylistSongPayloadSchema, CollaborationPayloadSchema, ExportPlaylistsPayloadSchema } = require('./schema');
 
 const AlbumValidator = {
     validateAlbumPayload: (payload) => {
@@ -73,4 +73,23 @@ const CollaborationsValidator = {
   },
 };
 
-module.exports = { AlbumValidator, SongValidator, UserValidator, AuthenticationValidator, TokenValidator, PlaylistValidator, PlaylistSongValidator, CollaborationsValidator };
+const ExportPlaylistsValidator = {
+    validateExportPlaylistsPayload: (payload) => {
+        const validationResult = ExportPlaylistsPayloadSchema.validate(payload);
+        if (validationResult.error) {
+            throw new InvariantError(validationResult.error.message);
+        }
+    },
+};
+
+module.exports = { 
+    AlbumValidator, 
+    SongValidator, 
+    UserValidator, 
+    AuthenticationValidator, 
+    TokenValidator, 
+    PlaylistValidator, 
+    PlaylistSongValidator, 
+    CollaborationsValidator, 
+    ExportsValidator 
+};

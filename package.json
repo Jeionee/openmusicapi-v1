@@ -23,7 +23,9 @@
   "homepage": "https://github.com/Jeionee/openmusicapi-v1#readme",
   "dependencies": {
     "@hapi/hapi": "^21.4.4",
+    "@hapi/inert": "^7.1.0",
     "@hapi/jwt": "^3.2.1",
+    "amqplib": "^0.10.9",
     "auto-bind": "^5.0.1",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",

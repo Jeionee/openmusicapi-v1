@@ -9,6 +9,7 @@ const users = require('./api/users');
 const authentications = require('./api/authentications');
 const playlists = require('./api/playlists');
 const collaborations = require('./api/collaborations'); 
+const _exports = require('./api/exports');
 
 // Import Services
 const AlbumsService = require('./services/AlbumsService');
@@ -17,6 +18,9 @@ const UsersService = require('./services/UsersService');
 const AuthenticationsService = require('./services/AuthenticationsService');
 const PlaylistsService = require('./services/PlaylistsService');
 const CollaborationsService = require('./services/CollaborationsService');
+const ProducerService = require('./services/rabbitmq/ProducerService');
+const StorageService = require('./services/storage/StorageService');
+const path = require('path');
 
 // Import Validators
 const {
@@ -28,6 +32,7 @@ const {
   PlaylistValidator,
   PlaylistSongValidator,
   CollaborationsValidator,
+  ExportsValidator
 } = require('./validator');
 
 const ClientError = require('./exceptions/ClientError');
@@ -38,7 +43,8 @@ const init = async () => {
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
   const collaborationsService = new CollaborationsService();
-  const playlistsService = new PlaylistsService(collaborationsService); // Inject Collab Service
+  const playlistsService = new PlaylistsService(collaborationsService);
+  const storageService = new StorageService(path.resolve(__dirname, 'api/albums/file/covers'));
 
   const server = Hapi.server({
     port: process.env.PORT || 5000,
@@ -74,6 +80,7 @@ const init = async () => {
       options: {
         service: albumsService,
         validator: AlbumValidator,
+        storageService: storageService,
       },
     },
     {
@@ -102,7 +109,7 @@ const init = async () => {
       plugin: playlists,
       options: {
         service: playlistsService,
-        songsService, // <--- Ini harus bernama songsService
+        songsService, 
         validator: PlaylistValidator,
         playlistSongValidator: PlaylistSongValidator,
       },
@@ -114,6 +121,14 @@ const init = async () => {
         playlistsService,
         usersService,
         validator: CollaborationsValidator,
+      },
+    },
+    {
+      plugin: _exports,
+      options: {
+        service: ProducerService,
+        playlistsService: playlistsService,
+        validator: ExportsValidator,
       },
     },
   ]);
