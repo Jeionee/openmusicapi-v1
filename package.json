@@ -1,37 +1,18 @@
 {
-  "name": "openmusic-v1",
+  "name": "openmusic-consumer",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./src/server.js",
-    "start:dev": "nodemon ./src/server.js",
-    "migrate": "npx node-pg-migrate",
-    "migrate:up": "node-pg-migrate up",
-    "migrate:down": "node-pg-migrate down"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Jeionee/openmusicapi-v1.git"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Jeionee/openmusicapi-v1/issues"
-  },
-  "homepage": "https://github.com/Jeionee/openmusicapi-v1#readme",
   "dependencies": {
-    "@hapi/hapi": "^21.4.4",
-    "@hapi/jwt": "^3.2.1",
-    "auto-bind": "^5.0.1",
-    "bcrypt": "^6.0.0",
+    "amqplib": "^0.10.9",
     "dotenv": "^17.2.3",
-    "joi": "^18.0.1",
-    "migrate": "^2.1.0",
-    "nanoid": "^3.3.4",
-    "node-pg-migrate": "^8.0.3",
-    "nodemon": "^3.1.11",
-    "pg": "^8.11.3"
+    "nodemailer": "^7.0.12",
+    "pg": "^8.16.3"
   }
 }
