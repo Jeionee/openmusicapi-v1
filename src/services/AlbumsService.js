@@ -126,7 +126,7 @@ class AlbumsService {
         await this._cacheService.delete(`likes:${albumId}`);
     }
 
-    async unlikeAlbum(albumId, userId) {
+    async unlikeAlbum(userId, albumId) { 
         const query = {
             text: 'DELETE FROM user_album_likes WHERE user_id = $1 AND album_id = $2 RETURNING id',
             values: [userId, albumId],
@@ -135,7 +135,7 @@ class AlbumsService {
         const result = await this._pool.query(query);
 
         if (!result.rows.length) { 
-            throw new NotFoundError('Gagal menyukai album ini');
+            throw new NotFoundError('Gagal membatalkan suka. Data tidak ditemukan.');
         }
 
         await this._cacheService.delete(`likes:${albumId}`);
@@ -153,7 +153,7 @@ class AlbumsService {
             const result = await this._pool.query(query);
             const likes = parseInt(result.rows[0].count, 10);
 
-            await this._cacheService.set(`likes:${albumId}`, JSON.stringify(likesCount), 1800);
+            await this._cacheService.set(`likes:${albumId}`, JSON.stringify(likes), 1800);
             return { likes, isCache: false };
         }
     }

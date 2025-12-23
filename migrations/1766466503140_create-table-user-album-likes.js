@@ -7,7 +7,7 @@
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
-export const up = (pgm) => {
+exports.up = (pgm) => {
     pgm.createTable('user_album_likes', {
     id: {
       type: 'VARCHAR(50)',
@@ -33,6 +33,6 @@ export const up = (pgm) => {
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
-export const down = (pgm) => {
+exports.down = (pgm) => {
     pgm.dropTable('user_album_likes');
 };
