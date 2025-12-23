@@ -40,6 +40,7 @@ const {
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
+  const cacheService = new CacheService();
   const albumsService = new AlbumsService(cacheService);
   const songsService = new SongsService();
   const usersService = new UsersService();
@@ -47,7 +48,6 @@ const init = async () => {
   const collaborationsService = new CollaborationsService();
   const playlistsService = new PlaylistsService(collaborationsService);
   const storageService = new StorageService(path.resolve(__dirname, 'api/albums/file/covers'));
-  const cacheService = new CacheService();
 
   const server = Hapi.server({
     port: process.env.PORT || 5000,

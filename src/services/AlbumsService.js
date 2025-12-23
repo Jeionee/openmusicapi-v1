@@ -5,10 +5,6 @@ const NotFoundError = require('../exceptions/NotFoundError');
 const { mapDBToModel } = require('../utils');
 
 class AlbumsService {
-    constructor() {
-        this._pool = new Pool();
-    }
-
     constructor(cacheService) {
         this._pool = new Pool();
         this._cacheService = cacheService;
@@ -157,7 +153,7 @@ class AlbumsService {
             const result = await this._pool.query(query);
             const likes = parseInt(result.rows[0].count, 10);
 
-            await this._cacheService.set(`likes:${albumId}`, JSON.stringify(likesCount));
+            await this._cacheService.set(`likes:${albumId}`, JSON.stringify(likesCount), 1800);
             return { likes, isCache: false };
         }
     }
