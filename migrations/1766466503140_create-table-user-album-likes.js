@@ -8,12 +8,24 @@
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-    pgm.addColumn('albums', {
-        cover: {
-            type: 'TEXT',
-            default: null,
-        },
-    });
+    pgm.createTable('user_album_likes', {
+    id: {
+      type: 'VARCHAR(50)',
+      primaryKey: true,
+    },
+    user_id: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+      references: '"users"',
+      onDelete: 'cascade',
+    },
+    album_id: {
+      type: 'VARCHAR(50)',
+      notNull: true,
+      references: '"albums"',
+      onDelete: 'cascade',
+    },
+  });
 };
 
 /**
@@ -22,5 +34,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-    pgm.dropColumn('albums', 'cover');
+    pgm.dropTable('user_album_likes');
 };

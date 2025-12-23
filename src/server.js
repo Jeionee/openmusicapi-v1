@@ -21,6 +21,7 @@ const PlaylistsService = require('./services/PlaylistsService');
 const CollaborationsService = require('./services/CollaborationsService');
 const ProducerService = require('./services/rabbitmq/ProducerService');
 const StorageService = require('./services/storage/StorageService');
+const CacheService = require('./services/redis/CacheService');
 const path = require('path');
 
 // Import Validators
@@ -39,13 +40,14 @@ const {
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
-  const albumsService = new AlbumsService();
+  const albumsService = new AlbumsService(cacheService);
   const songsService = new SongsService();
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
   const collaborationsService = new CollaborationsService();
   const playlistsService = new PlaylistsService(collaborationsService);
   const storageService = new StorageService(path.resolve(__dirname, 'api/albums/file/covers'));
+  const cacheService = new CacheService();
 
   const server = Hapi.server({
     port: process.env.PORT || 5000,
